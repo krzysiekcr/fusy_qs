@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.thymeleaf.org" xmlns:th="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta charset="utf-8" />
+		<title> Group shopping details </title>
+
+		<meta name="keywords" content="student, codecool, quest, coolcoins" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+		<link th:href="@{/student_template.css}" rel="stylesheet" />
+		<link rel="stylesheet" th:href="@{/fontello-2038ce78/css/fontello.css}" type="text/css" />
+		<link href='http://fonts.googleapis.com/css?family=Lato:400,900&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+	</head>
+
+	<body>
+		<div id="container">
+			<div id="bar">
+				<!--------------- MAIN BAR --------------->
+				<div th:insert="fragments/student-fragments :: mainBar" ></div>
+				<!--------------- LOW MENU --------------->
+				<div th:insert="fragments/student-fragments :: lowMenu" ></div>
+			</div>
+			<!--------------- TOP BAR --------------->
+			<div id="topbar" class="flex-container">
+				<div id="topbarL" class="topbarL">
+					<i class="icon-graduation-cap"></i>
+				</div>
+
+				<div id="topbarR" >
+					<span class="bigtitle"> Group transaction details </span>
+					<div style="height: 15px;"></div>
+					Here you can contribute to the selected transaction
+					or withdraw your funds before the end of the fundraiser.
+				</div>
+			</div>
+
+			<!--------------- MAIN CONTENT --------------->
+			<div id="main-content" class="flex-container">
+				<!--------------- SIDEBAR --------------->
+				<div class="sidebar-div">
+					<div th:insert="fragments/student-fragments :: sidebar"></div>
+				</div>
+
+				<div id="content">
+					<h2> ITEM NAME: <span th:text="${currentRequest.itemName}"> </span></h2>
+					<p> DESCRIPTION: <span th:text="${currentRequest.itemDescription}"> </span></p>
+					<p>PRICE: <span th:text="${currentRequest.itemCost}"> </span> coolcoins </p>
+					<br>
+
+					<h3> DETAILS </h3>
+					<div class="dottedline"></div>
+					<table id = "request_details_table">
+						<tr>
+							<td class="tableTitle"> Student's name </td>
+							<td class="tableTitle"> Contribution </td>
+							<td class="tableTitle"> Withdraw funds </td>
+						</tr>
+
+						<tr th:each="detail : ${currentRequest.requestDetails}">
+							<td><span th:text="${detail.student.firstName} + ' ' + ${detail.student.lastName}"> </span></td>
+							<td><span th:text="${detail.coolcoins}"> </span></td>
+							<td>
+								<span th:if="${detail.student.userId} == ${session.student.userId}">
+									<button> WITHDRAW </button>
+								</span>
+							</td>
+						</tr>
+					</table>
+					<h4> STATUS: <span th:text="${totalContribution} + '/' + ${currentRequest.itemCost}"></span></h4>
+					<br/>
+
+					<form action="post"
+						  th:action="@{/student/shop-group-shopping-details/{id}(id=${currentRequest.id})}"
+						  th:object="${requestDetailsDto}"
+						  method="post">
+						<input id="contribution"
+							   type="number"
+							   step="10" min="10"
+							   th:max="${missingFunds}"
+							   th:field="*{coolcoins}" required>
+						<input type="submit" value="SEND COOLCOINS"/>
+					</form> <br/>
+					<a th:href="@{/student/shop-group-shopping}"> Back to requests list </a>
+
+				</div>
+			</div>
+
+			<!-- FOOTER -->
+			<div th:insert="fragments/student-fragments :: footer"></div>
+		</div>
+	</body>
+</html>
